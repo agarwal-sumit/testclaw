@@ -1,0 +1,27 @@
+{
+  "name": "testclaw",
+  "version": "0.1.0",
+  "description": "AI-powered mobile app testing CLI using Claude Code Agent SDK",
+  "type": "module",
+  "bin": {
+    "testclaw": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "compile": "bun build --compile --minify src/index.ts --outfile testclaw"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.64",
+    "commander": "^12.0.0",
+    "yaml": "^2.4.0",
+    "zod": "^3.23.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0",
+    "execa": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+id: "suite/test-name-001"
+name: "User can perform some action"
+suite: "suite"
+priority: "medium"        # critical | high | medium | low
+type: "auto"              # integration | maestro | agentic | auto
+preconditions:
+  - "User is on the main screen"
+steps:
+  - action: "tap"
+    target: "Button or element description"
+    description: "Tap the target element"
+  - action: "input"
+    target: "Input field description"
+    value: "text to enter"
+    description: "Enter text into the field"
+  - action: "assert"
+    target: "Expected element or screen"
+    value: "Expected text content"
+    description: "Verify the expected result"
+expectedResult: "Description of what should happen"
+elementMappings:
+  "Button or element description":
+    key: "Key('widgetKey')"
+    text: "Button Text"
+    type: "ElevatedButton"
+version: 1
