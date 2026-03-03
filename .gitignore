@@ -4,3 +4,16 @@ testclaw
 qa
 *.tsbuildinfo
 .DS_Store
+
+# Local Claude Code config
+.claude/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.crt

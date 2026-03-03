@@ -17,6 +17,22 @@ Mobile app testing is painful. You write fragile UI tests that break every time 
 
 It uses the [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk-typescript) under the hood, so Claude has full access to read your codebase, edit test files, and run commands — the same capabilities as Claude Code, but orchestrated programmatically.
 
+## Design philosophy: AI writes, deterministic code runs
+
+A fully agentic test runner — where Claude screenshots the app and decides what to do on every run — sounds appealing, but it doesn't scale. Each run costs API calls, takes minutes, and can produce non-deterministic results. You can't run it in CI 50 times a day.
+
+TestClaw separates the **intelligence** from the **execution**:
+
+1. **AI writes the tests** — Claude reads your codebase, understands widget trees, routes, and selectors, and generates real test code (Dart integration tests or Maestro YAML flows) from plain-English descriptions. This is the expensive, smart part — and it only happens once.
+
+2. **Deterministic code runs the tests** — The generated tests are standard Flutter/Maestro tests. They run fast, produce consistent results, cost nothing, and work in CI. No AI in the loop during execution.
+
+3. **AI kicks in again only when things break** — When a test fails, Claude takes a screenshot, analyzes the failure, and either heals the test automatically or flags it as a real bug. The agentic loop is reserved for diagnosis and repair, not routine execution.
+
+4. **Full agentic mode is available when you need it** — For flows that genuinely can't be scripted (OAuth popups, camera, biometrics), you can mark tests as `type: agentic` and Claude will drive the app visually. But this is opt-in, not the default.
+
+The result: you get the authoring speed of AI with the execution speed and reliability of traditional tests.
+
 ## What it does
 
 ```
@@ -39,7 +55,8 @@ testclaw status                            # See results
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** CLI — `npm install -g @anthropic-ai/claude-code`
 - **Flutter** (if testing Flutter apps) — [install guide](https://docs.flutter.dev/get-started/install)
 - **Maestro** (for Maestro-based and agentic tests) — `curl -fsSL "https://get.maestro.mobile.dev" | bash` (requires Java 17+)
-- **Anthropic API key** — set as `ANTHROPIC_API_KEY` environment variable
+
+> **Note:** `ANTHROPIC_API_KEY` is **not required** if you have Claude Code CLI installed and authenticated. TestClaw uses the Claude Agent SDK which piggybacks on your existing Claude Code session. If Claude Code works on your machine, TestClaw will too — no separate API key needed.
 
 ```bash
 # Verify prerequisites
@@ -269,7 +286,7 @@ autoCommitResults: true             # Git commit after each run
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key |
+| `ANTHROPIC_API_KEY` | No | Anthropic API key. Not needed if Claude Code CLI is already authenticated on your machine. |
 | `CLAUDE_PATH` | No | Path to Claude Code executable (default: auto-detect) |
 | `QA_USE_SYSTEM_CLAUDE` | No | Set to `1` to force using the system `claude` CLI |
 
